@@ -184,9 +184,11 @@ int main()
 	Nx = 11;
 	Ny = 11;
 
+	// Get the Cartisian and principal stress field
 	std::tie(x_vec, y_vec, grid_11, grid_22, grid_12) = stress_field(xfrom, xto, yfrom, yto, Nx, Ny, H, rho, g, nu, kappa);
 	std::tie(grid_1, grid_2, theta_p) = principal_stress_field(grid_11, grid_22, grid_12);
 
+	// Display the data (Example purposes)
 	std::cout << "The chartisian stress sigma_22\n";
 	for (size_t i = 0; i < x_vec.size(); i++)
 	{
@@ -207,6 +209,7 @@ int main()
 
 	}
 
+	// Save the data on a .txt file (Example purposes)
 	std::ofstream myfile;
 	myfile.open("data.txt");
 	for (size_t ii = 0; ii < grid_11.size(); ii++)

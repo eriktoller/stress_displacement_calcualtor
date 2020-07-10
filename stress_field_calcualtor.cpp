@@ -184,40 +184,51 @@ int main()
 	Nx = 11;
 	Ny = 11;
 
+	// Displying the plot data
+	std::cout << "This is the preset plot data:\n";
+	std::cout << "x from: " << xfrom << " to " << xto << std::endl;
+	std::cout << "y from: " << yfrom << " to " << yto << std::endl;
+	std::cout << "x resolution: " << Nx << " and y resolution: " << Ny << std::endl << std::endl;
+
 	// Get the Cartisian and principal stress field
 	std::tie(x_vec, y_vec, grid_11, grid_22, grid_12) = stress_field(xfrom, xto, yfrom, yto, Nx, Ny, H, rho, g, nu, kappa);
 	std::tie(grid_1, grid_2, theta_p) = principal_stress_field(grid_11, grid_22, grid_12);
 
 	// Display the data (Example purposes)
-	std::cout << "The chartisian stress sigma_22\n";
-	for (size_t i = 0; i < x_vec.size(); i++)
-	{
-		for (size_t j = 0; j < y_vec.size(); j++)
-		{
-			std::cout << "[" << x_vec[i] << "]" << "[" << y_vec[j] << "]= " << grid_22[i][j] << std::endl;
-		}
-
-	}
-
-	std::cout << "The principal stress sigma_2\n";
-	for (size_t i = 0; i < x_vec.size(); i++)
-	{
-		for (size_t j = 0; j < y_vec.size(); j++)
-		{
-			std::cout << "[" << x_vec[i] << "]" << "[" << y_vec[j] << "]= " << grid_2[i][j] << std::endl;
-		}
-
-	}
+	std::cout << "The stress feilds has been calculated";
 
 	// Save the data on a .txt file (Example purposes)
 	std::ofstream myfile;
 	myfile.open("data.txt");
 	for (size_t ii = 0; ii < grid_11.size(); ii++)
 	{
-		for (size_t jj = 0; jj < grid_11[0].size(); jj++)
+		myfile << "grid_11[" << ii << "] = [";
+		myfile << grid_11[ii][0];
+		for (size_t jj = 1; jj < grid_11[0].size(); jj++)
 		{
-			myfile << " " << grid_1[ii][jj];
+			myfile << "," << grid_11[ii][jj];
 		}
+		myfile << "]\n";
+	}
+	for (size_t ii = 0; ii < grid_22.size(); ii++)
+	{
+		myfile << "grid_22[" << ii << "] = [";
+		myfile << grid_22[ii][0];
+		for (size_t jj = 0; jj < grid_22[0].size(); jj++)
+		{
+			myfile << "," << grid_22[ii][jj];
+		}
+		myfile << "]\n";
+	}
+	for (size_t ii = 0; ii < grid_12.size(); ii++)
+	{
+		myfile << "grid_12[" << ii << "] = [";
+		myfile << grid_12[ii][0];
+		for (size_t jj = 0; jj < grid_12[0].size(); jj++)
+		{
+			myfile << "," << grid_12[ii][jj];
+		}
+		myfile << "]\n";
 	}
 	myfile.close();
 

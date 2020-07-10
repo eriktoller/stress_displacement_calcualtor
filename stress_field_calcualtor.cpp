@@ -85,10 +85,12 @@ std::tuple<dvec, dvec, ddvec, ddvec, ddvec> stress_field(double xfrom, double xt
 	dvec x_vec(Nx);
 	dvec y_vec(Ny);
 	dcomp z_grid;
+	int time_Nx;
 
 	// Retriving the terms from the sigma function for z
 	dx = (xto - xfrom) / (Nx-1);
 	dy = (yto - yfrom) / (Ny-1);
+	std::cout << "Progress of the stress field calculation\n";
 	for (int ii = 0; ii < Nx; ii++)
 	{
 		for (int jj = 0; jj < Ny; jj++)
@@ -101,8 +103,10 @@ std::tuple<dvec, dvec, ddvec, ddvec, ddvec> stress_field(double xfrom, double xt
 			grid_22[ii][jj] = sigma_22;
 			grid_12[ii][jj] = sigma_12;
 		}
+		time_Nx = ii*100 / Nx + 1;
+		std::cout << "\r " << time_Nx << "%";
 	}
-
+	std::cout << "\nComplete\n";
 	return {x_vec, y_vec, grid_11, grid_22, grid_12};
 }
 
@@ -122,7 +126,16 @@ std::tuple<double, double, double> principal_sigma(double sigma_11, double sigma
 	// Calculating the principal stresses and the angel of sigma_1
 	sigma_1 = frac1 + sqrt1;
 	sigma_2 = frac1 - sqrt1;
-	theta_p = 0.5*atan((2 * sigma_12) / (sigma_11 - sigma_22));
+
+	// Calcuating the angel theta_p
+	if (sigma_11 == sigma_22)
+	{
+		theta_p = 0;
+	}
+	else
+	{
+		theta_p = 0.5*atan((2 * sigma_12) / (sigma_11 - sigma_22));
+	}
 
 	return { sigma_1, sigma_2, theta_p };
 }
@@ -136,7 +149,9 @@ std::tuple<ddvec, ddvec, ddvec> principal_stress_field(ddvec grid_11, ddvec grid
 	ddvec grid_1(grid_11.size(), dvec(grid_11[0].size()));
 	ddvec grid_2(grid_11.size(), dvec(grid_11[0].size()));
 	ddvec grid_theta(grid_11.size(), dvec(grid_11[0].size()));
+	int time_Nx;
 
+	std::cout << "Progress of the principal stress field calculation\n";
 	// Retriving the terms from the sigma function for z
 	for (size_t ii = 0; ii < grid_11.size(); ii++)
 	{
@@ -147,8 +162,11 @@ std::tuple<ddvec, ddvec, ddvec> principal_stress_field(ddvec grid_11, ddvec grid
 			grid_2[ii][jj] = sigma_2;
 			grid_theta[ii][jj] = theta_p;
 		}
+		time_Nx = ii * 100 / grid_11.size() + 1;
+		std::cout << "\r " << time_Nx << "%";
 	}
 
+	std::cout << "\nComplete\n";
 	return { grid_1, grid_2, grid_theta };
 }
 
@@ -181,8 +199,8 @@ int main()
 	xto = 1;
 	yfrom = -1;
 	yto = 1;
-	Nx = 11;
-	Ny = 11;
+	Nx = 2001;
+	Ny = 2001;
 
 	// Displying the plot data
 	std::cout << "This is the preset plot data:\n";
@@ -200,9 +218,23 @@ int main()
 	// Save the data on a .txt file (Example purposes)
 	std::ofstream myfile;
 	myfile.open("data.txt");
+	myfile << "x_vec = [";
+	myfile << x_vec[0];
+	for (size_t jj = 1; jj < x_vec.size(); jj++)
+	{
+		myfile << "," << x_vec[jj];
+	}
+	myfile << "]\n";
+	myfile << "y_vec = [";
+	myfile << y_vec[0];
+	for (size_t jj = 1; jj < y_vec.size(); jj++)
+	{
+		myfile << "," << y_vec[jj];
+	}
+	myfile << "]\n";
 	for (size_t ii = 0; ii < grid_11.size(); ii++)
 	{
-		myfile << "grid_11[" << ii << "] = [";
+		myfile << "grid_11(" << ii + 1 << ",:) = [";
 		myfile << grid_11[ii][0];
 		for (size_t jj = 1; jj < grid_11[0].size(); jj++)
 		{
@@ -212,9 +244,9 @@ int main()
 	}
 	for (size_t ii = 0; ii < grid_22.size(); ii++)
 	{
-		myfile << "grid_22[" << ii << "] = [";
+		myfile << "grid_22(" << ii + 1 << ",:) = [";
 		myfile << grid_22[ii][0];
-		for (size_t jj = 0; jj < grid_22[0].size(); jj++)
+		for (size_t jj = 1; jj < grid_22[0].size(); jj++)
 		{
 			myfile << "," << grid_22[ii][jj];
 		}
@@ -222,11 +254,41 @@ int main()
 	}
 	for (size_t ii = 0; ii < grid_12.size(); ii++)
 	{
-		myfile << "grid_12[" << ii << "] = [";
+		myfile << "grid_12(" << ii + 1 << ",:) = [";
 		myfile << grid_12[ii][0];
-		for (size_t jj = 0; jj < grid_12[0].size(); jj++)
+		for (size_t jj = 1; jj < grid_12[0].size(); jj++)
 		{
 			myfile << "," << grid_12[ii][jj];
+		}
+		myfile << "]\n";
+	}
+	for (size_t ii = 0; ii < grid_1.size(); ii++)
+	{
+		myfile << "grid_1(" << ii + 1 << ",:) = [";
+		myfile << grid_1[ii][0];
+		for (size_t jj = 1; jj < grid_1[0].size(); jj++)
+		{
+			myfile << "," << grid_1[ii][jj];
+		}
+		myfile << "]\n";
+	}
+	for (size_t ii = 0; ii < grid_2.size(); ii++)
+	{
+		myfile << "grid_2(" << ii + 1 << ",:) = [";
+		myfile << grid_2[ii][0];
+		for (size_t jj = 1; jj < grid_2[0].size(); jj++)
+		{
+			myfile << "," << grid_2[ii][jj];
+		}
+		myfile << "]\n";
+	}
+	for (size_t ii = 0; ii < theta_p.size(); ii++)
+	{
+		myfile << "theta_p(" << ii + 1 << ",:) = [";
+		myfile << theta_p[ii][0];
+		for (size_t jj = 1; jj < theta_p[0].size(); jj++)
+		{
+			myfile << "," << theta_p[ii][jj];
 		}
 		myfile << "]\n";
 	}

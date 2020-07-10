@@ -8,8 +8,8 @@ The program now includes the anlytic element for gravity, and it produces the Ca
 The user will have to define the funciton files for the stresses. The program will the use those to calculate and export the stress field for a given grid.
 
 Remaining work:
-> *Get the program to read or interact with MATLAB
-> *Incldue the fuctions for more anlaytical elements
+> - Get the program to read or interact with MATLAB
+> - Incldue the fuctions for more anlaytical elements
 
 Created by,
 Erik Toller

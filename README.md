@@ -10,6 +10,7 @@ The user will have to define the funciton files for the stresses. The program wi
 Remaining work:
 > - Get the program to read or interact with MATLAB
 > - Incldue the fuctions for more anlaytical elements
+> - Make the program more robust
 
 Created by,
 Erik Toller

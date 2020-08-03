@@ -7,6 +7,8 @@
 %                                                                         %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 close all
+clearvars
+clc
 
 disp('Load the data from the bin-file')
 data_file = fopen('data.bin', 'r');

@@ -10,7 +10,15 @@ typedef std::complex<double> dcomp;
 typedef std::vector<double> dvec;
 typedef std::vector<std::vector<double>> ddvec;
 
-// FUNCTIONS
+/* --------------------------------------------------------------------
+
+		FUNCTIONS
+
+-----------------------------------------------------------------------*/
+
+/* --------------------------------------------------------------------
+		TRACTION GRAVITY
+-----------------------------------------------------------------------*/
 dcomp T_gravity(dcomp z, int H, double rho, double g, double nu, double kappa)
 {
 	// Defining the variables
@@ -36,6 +44,9 @@ dcomp T_gravity(dcomp z, int H, double rho, double g, double nu, double kappa)
 	return T;
 }
 
+/* --------------------------------------------------------------------
+		STRESS GRAVITY
+-----------------------------------------------------------------------*/
 std::tuple<double, double, double> sigma_gravity(dcomp z, dcomp H, double rho, double g, double nu, double kappa)
 {
 	// Defining the variables
@@ -71,6 +82,9 @@ std::tuple<double, double, double> sigma_gravity(dcomp z, dcomp H, double rho, d
 	return {sigma_11, sigma_22, sigma_12 };
 }
 
+/* --------------------------------------------------------------------
+		STRESS FIELD
+-----------------------------------------------------------------------*/
 std::tuple<dvec, dvec, ddvec, ddvec, ddvec> stress_field(double xfrom, double xto, double yfrom, double yto, int Nx, int Ny, dcomp H, double rho, double g, double nu, double kappa)
 {
 	// Defining the variables
@@ -110,6 +124,9 @@ std::tuple<dvec, dvec, ddvec, ddvec, ddvec> stress_field(double xfrom, double xt
 	return {x_vec, y_vec, grid_11, grid_22, grid_12};
 }
 
+/* --------------------------------------------------------------------
+		PRINCIPAL STRESSES
+-----------------------------------------------------------------------*/
 std::tuple<double, double, double> principal_sigma(double sigma_11, double sigma_22, double sigma_12)
 {
 	// Defining the variables
@@ -140,6 +157,9 @@ std::tuple<double, double, double> principal_sigma(double sigma_11, double sigma
 	return { sigma_1, sigma_2, theta_p };
 }
 
+/* --------------------------------------------------------------------
+		PRINCIPAL STRESS FIELDS
+-----------------------------------------------------------------------*/
 std::tuple<ddvec, ddvec, ddvec> principal_stress_field(ddvec grid_11, ddvec grid_22, ddvec grid_12)
 {
 	// Defining the variables
@@ -170,9 +190,17 @@ std::tuple<ddvec, ddvec, ddvec> principal_stress_field(ddvec grid_11, ddvec grid
 	return { grid_1, grid_2, grid_theta };
 }
 
-// MAIN
+/* --------------------------------------------------------------------
+
+		MAIN SCRIPT
+
+-----------------------------------------------------------------------*/
 int main()
 {
+	/* --------------------------------------------------------------------
+			Defining variables and imprting data
+	-----------------------------------------------------------------------*/
+
 	std::cout << "This is a program under construction and is not fully developed yet.\n";
 	std::cout << "The first item that will be included is the analytic element for gravity (since its published).\n\n";
 	std::cout << "Reference:\nStrack, O. D. (2020). Applications of Vector Analysis and Complex Variables in Engineering. Springer International Publishing.\n\n";
@@ -231,6 +259,10 @@ int main()
 	std::cout << "y from: " << yfrom << " to " << yto << std::endl;
 	std::cout << "x resolution: " << Nx << " and y resolution: " << Ny << std::endl << std::endl;
 
+	/* --------------------------------------------------------------------
+			Calcuating the stress field
+	-----------------------------------------------------------------------*/
+
 	// Get the Cartisian and principal stress field
 	std::tie(x_vec, y_vec, grid_11, grid_22, grid_12) = stress_field(xfrom, xto, yfrom, yto, Nx, Ny, H, rho, g, nu, kappa);
 	std::tie(grid_1, grid_2, theta_p) = principal_stress_field(grid_11, grid_22, grid_12);
@@ -239,7 +271,7 @@ int main()
 	std::cout << "The stress feilds has been calculated \n";
 
 	/* -------------------------------------------------------------------- 
-							Wirte a binary files from data
+			Wirte a binary files from data
 	-----------------------------------------------------------------------*/
 
 	std::ofstream outfile("data.bin", std::ios::out | std::ios::binary);

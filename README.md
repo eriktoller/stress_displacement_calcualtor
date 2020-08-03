@@ -7,6 +7,14 @@ The program now includes the analytic element for gravity, and it produces the C
 
 The user will have to define the function files for the stresses. The program will the use those to calculate and export the stress field for a given grid.
 
+## Instructions
+To generate plot for stresses filed (here only for gravity at the moment) follow the following procedure:
+1. Run `bin_write.m`
+   - Generates the input data and plot data in `input_data.bin` and `plot_data.bin`.
+2. Run `stress_field_calculator.cpp`
+   - Calculates the stress fields and provide them in `data.bin` and the dimensions in `dim_data.bin`.
+3. Run `bin_read.m`
+   - Reads the data and plots the stress fields.
 
 Created by,
 Erik Toller

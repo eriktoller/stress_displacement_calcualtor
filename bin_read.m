@@ -77,3 +77,31 @@ contour(x_vec, y_vec, grid_2,lvs,'red');
 legend('\sigma_{2}')
 xlabel('x-direction')
 ylabel('y-direction')
+
+figure
+hold on
+contour(x_vec, y_vec, grid_11,lvs,'blue');
+legend('\sigma_{11}')
+xlabel('x-direction')
+ylabel('y-direction')
+
+figure
+hold on
+contour(x_vec, y_vec, grid_22,lvs,'red');
+legend('\sigma_{22}')
+xlabel('x-direction')
+ylabel('y-direction')
+
+figure
+hold on
+contour(x_vec, y_vec, grid_12,lvs,'blue');
+legend('\sigma_{12}')
+xlabel('x-direction')
+ylabel('y-direction')
+
+figure
+hold on
+contour(x_vec, y_vec, theta_p,lvs,'red');
+legend('\theta_{p}')
+xlabel('x-direction')
+ylabel('y-direction')

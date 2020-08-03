@@ -187,20 +187,43 @@ int main()
 	ddvec grid_1, grid_2, theta_p;
 	dvec x_vec, y_vec;
 
+	/*
 	// Assigning varibales
 	H = dcomp(0,0);
 	rho = 2750.0;
 	g = 9.816;
 	nu = 0.3;
 	kappa = 3 - 4 * nu;
+	
 
 	// Plot dim and resolutioin
 	xfrom = -1;
 	xto = 1;
 	yfrom = -1;
 	yto = 1;
-	Nx = 2001;
-	Ny = 2001;
+	Nx = 201;
+	Ny = 201;
+	*/
+
+	// Read the input and plot data
+	double fin[6];
+	std::ifstream input_file("input_data.bin", std::ios::in | std::ios::binary);
+	input_file.read((char *)&fin, sizeof fin);
+	H = dcomp(fin[0], fin[1]);
+	rho = fin[2];
+	g = fin[3];
+	nu = fin[4];
+	kappa = fin[5];
+
+	double fplot[6];
+	std::ifstream plot_file("plot_data.bin", std::ios::in | std::ios::binary);
+	plot_file.read((char *)&fplot, sizeof fplot);
+	xfrom = fplot[0];
+	xto = fplot[1];
+	yfrom = fplot[2];
+	yto = fplot[3];
+	Nx = (int) fplot[4];
+	Ny = (int) fplot[5];
 
 	// Displying the plot data
 	std::cout << "This is the preset plot data:\n";
@@ -213,86 +236,79 @@ int main()
 	std::tie(grid_1, grid_2, theta_p) = principal_stress_field(grid_11, grid_22, grid_12);
 
 	// Display the data (Example purposes)
-	std::cout << "The stress feilds has been calculated";
+	std::cout << "The stress feilds has been calculated \n";
 
-	// Save the data on a .txt file (Example purposes)
-	std::ofstream myfile;
-	myfile.open("data.txt");
-	myfile << "x_vec = [";
-	myfile << x_vec[0];
-	for (size_t jj = 1; jj < x_vec.size(); jj++)
-	{
-		myfile << "," << x_vec[jj];
-	}
-	myfile << "]\n";
-	myfile << "y_vec = [";
-	myfile << y_vec[0];
-	for (size_t jj = 1; jj < y_vec.size(); jj++)
-	{
-		myfile << "," << y_vec[jj];
-	}
-	myfile << "]\n";
+	/* -------------------------------------------------------------------- 
+							Wirte a binary files from data
+	-----------------------------------------------------------------------*/
+
+	std::ofstream outfile("data.bin", std::ios::out | std::ios::binary);
+	std::ofstream outfiledim("dim_data.bin", std::ios::out | std::ios::binary);
+
+	// The x and y vectors
+	dvec fx = x_vec;
+	const char* pointerx = reinterpret_cast<const char*>(&fx[0]);
+	std::size_t bytesx = fx.size() * sizeof(fx[0]);
+	outfile.write(pointerx, bytesx);
+
+	dvec fy = y_vec;
+	const char* pointery = reinterpret_cast<const char*>(&fy[0]);
+	std::size_t bytesy = fy.size() * sizeof(fy[0]);
+	outfile.write(pointery, bytesy);
+
+	// The grids
 	for (size_t ii = 0; ii < grid_11.size(); ii++)
 	{
-		myfile << "grid_11(" << ii + 1 << ",:) = [";
-		myfile << grid_11[ii][0];
-		for (size_t jj = 1; jj < grid_11[0].size(); jj++)
-		{
-			myfile << "," << grid_11[ii][jj];
-		}
-		myfile << "]\n";
+		dvec fg11 = grid_11[ii];
+		const char* pointerg11 = reinterpret_cast<const char*>(&fg11[0]);
+		std::size_t bytesg11 = fg11.size() * sizeof(fg11[0]);
+		outfile.write(pointerg11, bytesg11);
 	}
 	for (size_t ii = 0; ii < grid_22.size(); ii++)
 	{
-		myfile << "grid_22(" << ii + 1 << ",:) = [";
-		myfile << grid_22[ii][0];
-		for (size_t jj = 1; jj < grid_22[0].size(); jj++)
-		{
-			myfile << "," << grid_22[ii][jj];
-		}
-		myfile << "]\n";
+		dvec fg22 = grid_22[ii];
+		const char* pointerg22 = reinterpret_cast<const char*>(&fg22[0]);
+		std::size_t bytesg22 = fg22.size() * sizeof(fg22[0]);
+		outfile.write(pointerg22, bytesg22);
 	}
 	for (size_t ii = 0; ii < grid_12.size(); ii++)
 	{
-		myfile << "grid_12(" << ii + 1 << ",:) = [";
-		myfile << grid_12[ii][0];
-		for (size_t jj = 1; jj < grid_12[0].size(); jj++)
-		{
-			myfile << "," << grid_12[ii][jj];
-		}
-		myfile << "]\n";
+		dvec fg12 = grid_12[ii];
+		const char* pointerg12 = reinterpret_cast<const char*>(&fg12[0]);
+		std::size_t bytesg12 = fg12.size() * sizeof(fg12[0]);
+		outfile.write(pointerg12, bytesg12);
 	}
 	for (size_t ii = 0; ii < grid_1.size(); ii++)
 	{
-		myfile << "grid_1(" << ii + 1 << ",:) = [";
-		myfile << grid_1[ii][0];
-		for (size_t jj = 1; jj < grid_1[0].size(); jj++)
-		{
-			myfile << "," << grid_1[ii][jj];
-		}
-		myfile << "]\n";
+		dvec fg1 = grid_1[ii];
+		const char* pointerg1 = reinterpret_cast<const char*>(&fg1[0]);
+		std::size_t bytesg1 = fg1.size() * sizeof(fg1[0]);
+		outfile.write(pointerg1, bytesg1);
 	}
 	for (size_t ii = 0; ii < grid_2.size(); ii++)
 	{
-		myfile << "grid_2(" << ii + 1 << ",:) = [";
-		myfile << grid_2[ii][0];
-		for (size_t jj = 1; jj < grid_2[0].size(); jj++)
-		{
-			myfile << "," << grid_2[ii][jj];
-		}
-		myfile << "]\n";
+		dvec fg2 = grid_2[ii];
+		const char* pointerg2 = reinterpret_cast<const char*>(&fg2[0]);
+		std::size_t bytesg2 = fg2.size() * sizeof(fg2[0]);
+		outfile.write(pointerg2, bytesg2);
 	}
 	for (size_t ii = 0; ii < theta_p.size(); ii++)
 	{
-		myfile << "theta_p(" << ii + 1 << ",:) = [";
-		myfile << theta_p[ii][0];
-		for (size_t jj = 1; jj < theta_p[0].size(); jj++)
-		{
-			myfile << "," << theta_p[ii][jj];
-		}
-		myfile << "]\n";
+		dvec fgtp = theta_p[ii];
+		const char* pointergtp = reinterpret_cast<const char*>(&fgtp[0]);
+		std::size_t bytesgtp = fgtp.size() * sizeof(fgtp[0]);
+		outfile.write(pointergtp, bytesgtp);
 	}
-	myfile.close();
+
+
+	outfile.close();
+
+	// The dimensions of Nx and Ny vectors
+	dvec dim = { 1.0 * Nx, 1.0 * Ny };
+	const char* pointerdim = reinterpret_cast<const char*>(&dim[0]);
+	std::size_t bytesdim = dim.size() * sizeof(dim[0]);
+	outfiledim.write(pointerdim, bytesdim);
+	outfiledim.close();
 
 	return 0;
 }

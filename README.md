@@ -7,6 +7,8 @@ The program now includes the analytic element for gravity, and it produces the C
 
 The user will have to define the function files for the stresses. The program will the use those to calculate and export the stress field for a given grid.
 
+A log file, `log.txt`, is created with all the variable data and time stamp.
+
 ## Instructions
 To generate plot for stresses filed (here only for gravity at the moment) follow the following procedure:
 1. Run `bin_write.m`

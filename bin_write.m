@@ -35,3 +35,5 @@ B = [xfrom,xto,yfrom,yto,Nx,Ny]; % Vector to write
 plot_file = fopen('plot_data.bin','w');
 fwrite(plot_file,B,'double');
 fclose(plot_file);
+
+disp('The output files has been written.')

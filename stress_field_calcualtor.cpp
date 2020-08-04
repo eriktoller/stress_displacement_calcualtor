@@ -4,6 +4,8 @@
 #include <vector>
 #include <tuple>
 #include <fstream>
+#include <ctime>
+#include <chrono>
 
 // Defining special types
 typedef std::complex<double> dcomp;
@@ -201,6 +203,8 @@ int main()
 			Defining variables and imprting data
 	-----------------------------------------------------------------------*/
 
+	auto start = std::chrono::system_clock::now(); // Start the clock
+
 	std::cout << "This is a program under construction and is not fully developed yet.\n";
 	std::cout << "The first item that will be included is the analytic element for gravity (since its published).\n\n";
 	std::cout << "Reference:\nStrack, O. D. (2020). Applications of Vector Analysis and Complex Variables in Engineering. Springer International Publishing.\n\n";
@@ -233,7 +237,7 @@ int main()
 	Ny = 201;
 	*/
 
-	// Read the input and plot data
+	// Read the input data from binary file
 	double fin[6];
 	std::ifstream input_file("input_data.bin", std::ios::in | std::ios::binary);
 	input_file.read((char *)&fin, sizeof fin);
@@ -243,6 +247,7 @@ int main()
 	nu = fin[4];
 	kappa = fin[5];
 
+	// Read the plot data from binary file
 	double fplot[6];
 	std::ifstream plot_file("plot_data.bin", std::ios::in | std::ios::binary);
 	plot_file.read((char *)&fplot, sizeof fplot);
@@ -253,11 +258,13 @@ int main()
 	Nx = (int) fplot[4];
 	Ny = (int) fplot[5];
 
-	// Displying the plot data
+
+	// Displying the plot data in the command window
 	std::cout << "This is the preset plot data:\n";
 	std::cout << "x from: " << xfrom << " to " << xto << std::endl;
 	std::cout << "y from: " << yfrom << " to " << yto << std::endl;
-	std::cout << "x resolution: " << Nx << " and y resolution: " << Ny << std::endl << std::endl;
+	std::cout << "x resolution: " << Nx << " and y resolution: " << Ny;
+	std::cout <<std::endl << std::endl;
 
 	/* --------------------------------------------------------------------
 			Calcuating the stress field
@@ -267,80 +274,116 @@ int main()
 	std::tie(x_vec, y_vec, grid_11, grid_22, grid_12) = stress_field(xfrom, xto, yfrom, yto, Nx, Ny, H, rho, g, nu, kappa);
 	std::tie(grid_1, grid_2, theta_p) = principal_stress_field(grid_11, grid_22, grid_12);
 
-	// Display the data (Example purposes)
-	std::cout << "The stress feilds has been calculated \n";
+	std::cout << std::endl << std::endl;
 
 	/* -------------------------------------------------------------------- 
-			Wirte a binary files from data
+			Saving the data as binary files
 	-----------------------------------------------------------------------*/
 
+	std::cout << "Saving the output data \n";
+
+	// Create/open the two output files
 	std::ofstream outfile("data.bin", std::ios::out | std::ios::binary);
 	std::ofstream outfiledim("dim_data.bin", std::ios::out | std::ios::binary);
 
-	// The x and y vectors
+	// Save the x and y vectors
 	dvec fx = x_vec;
 	const char* pointerx = reinterpret_cast<const char*>(&fx[0]);
 	std::size_t bytesx = fx.size() * sizeof(fx[0]);
 	outfile.write(pointerx, bytesx);
-
+	
 	dvec fy = y_vec;
 	const char* pointery = reinterpret_cast<const char*>(&fy[0]);
 	std::size_t bytesy = fy.size() * sizeof(fy[0]);
 	outfile.write(pointery, bytesy);
 
-	// The grids
+	// Save the grids
 	for (size_t ii = 0; ii < grid_11.size(); ii++)
-	{
-		dvec fg11 = grid_11[ii];
-		const char* pointerg11 = reinterpret_cast<const char*>(&fg11[0]);
-		std::size_t bytesg11 = fg11.size() * sizeof(fg11[0]);
-		outfile.write(pointerg11, bytesg11);
-	}
+		{
+			dvec fg11 = grid_11[ii];
+			const char* pointerg11 = reinterpret_cast<const char*>(&fg11[0]);
+			std::size_t bytesg11 = fg11.size() * sizeof(fg11[0]);
+			outfile.write(pointerg11, bytesg11);
+		}
 	for (size_t ii = 0; ii < grid_22.size(); ii++)
-	{
-		dvec fg22 = grid_22[ii];
-		const char* pointerg22 = reinterpret_cast<const char*>(&fg22[0]);
-		std::size_t bytesg22 = fg22.size() * sizeof(fg22[0]);
-		outfile.write(pointerg22, bytesg22);
-	}
+		{
+			dvec fg22 = grid_22[ii];
+			const char* pointerg22 = reinterpret_cast<const char*>(&fg22[0]);
+			std::size_t bytesg22 = fg22.size() * sizeof(fg22[0]);
+			outfile.write(pointerg22, bytesg22);
+		}
 	for (size_t ii = 0; ii < grid_12.size(); ii++)
-	{
-		dvec fg12 = grid_12[ii];
-		const char* pointerg12 = reinterpret_cast<const char*>(&fg12[0]);
-		std::size_t bytesg12 = fg12.size() * sizeof(fg12[0]);
-		outfile.write(pointerg12, bytesg12);
-	}
+		{
+			dvec fg12 = grid_12[ii];
+			const char* pointerg12 = reinterpret_cast<const char*>(&fg12[0]);
+			std::size_t bytesg12 = fg12.size() * sizeof(fg12[0]);
+			outfile.write(pointerg12, bytesg12);
+		}
 	for (size_t ii = 0; ii < grid_1.size(); ii++)
-	{
-		dvec fg1 = grid_1[ii];
-		const char* pointerg1 = reinterpret_cast<const char*>(&fg1[0]);
-		std::size_t bytesg1 = fg1.size() * sizeof(fg1[0]);
-		outfile.write(pointerg1, bytesg1);
-	}
+		{
+			dvec fg1 = grid_1[ii];
+			const char* pointerg1 = reinterpret_cast<const char*>(&fg1[0]);
+			std::size_t bytesg1 = fg1.size() * sizeof(fg1[0]);
+			outfile.write(pointerg1, bytesg1);
+		}
 	for (size_t ii = 0; ii < grid_2.size(); ii++)
-	{
-		dvec fg2 = grid_2[ii];
-		const char* pointerg2 = reinterpret_cast<const char*>(&fg2[0]);
-		std::size_t bytesg2 = fg2.size() * sizeof(fg2[0]);
-		outfile.write(pointerg2, bytesg2);
-	}
+		{
+			dvec fg2 = grid_2[ii];
+			const char* pointerg2 = reinterpret_cast<const char*>(&fg2[0]);
+			std::size_t bytesg2 = fg2.size() * sizeof(fg2[0]);
+			outfile.write(pointerg2, bytesg2);
+		}
 	for (size_t ii = 0; ii < theta_p.size(); ii++)
-	{
-		dvec fgtp = theta_p[ii];
-		const char* pointergtp = reinterpret_cast<const char*>(&fgtp[0]);
-		std::size_t bytesgtp = fgtp.size() * sizeof(fgtp[0]);
-		outfile.write(pointergtp, bytesgtp);
-	}
+		{
+			dvec fgtp = theta_p[ii];
+			const char* pointergtp = reinterpret_cast<const char*>(&fgtp[0]);
+			std::size_t bytesgtp = fgtp.size() * sizeof(fgtp[0]);
+			outfile.write(pointergtp, bytesgtp);
+		}
 
-
-	outfile.close();
-
-	// The dimensions of Nx and Ny vectors
+	// Save the dimensions of Nx and Ny vectors
 	dvec dim = { 1.0 * Nx, 1.0 * Ny };
 	const char* pointerdim = reinterpret_cast<const char*>(&dim[0]);
 	std::size_t bytesdim = dim.size() * sizeof(dim[0]);
 	outfiledim.write(pointerdim, bytesdim);
+
+	// Close the output files
+	outfile.close();
 	outfiledim.close();
+
+	std::cout << "Saving completed" << std::endl << std::endl;
+	std::cout << "Program finnished and output data saved to binary files\n";
+
+	// Create the log file
+	auto end = std::chrono::system_clock::now(); // Get the stop time
+	std::chrono::duration<double> elapsed_seconds = end - start;
+	std::time_t end_time = std::chrono::system_clock::to_time_t(end);
+	//const char * dt = std::ctime(&end_time);
+	char str[26];
+	ctime_s(str, sizeof str, &end_time);
+	
+
+	std::ofstream logfile;
+	logfile.open("log.txt");
+	logfile << "This is the log file for computation completed on: " << str << std::endl;
+	logfile << "The computation took: " << elapsed_seconds.count() << "s";
+	logfile << std::endl << std::endl;
+	logfile << "These are the values of the constants:\n";
+	logfile << "    H = (" << H.real() << "," << H.imag() << ")" << std::endl;
+	logfile << "  rho = " << rho << std::endl;
+	logfile << "    g = " << g << std::endl;
+	logfile << "   nu = " << nu << std::endl;
+	logfile << "kappa = " << kappa << std::endl;
+	logfile << std::endl << std::endl;
+	logfile << "This is the used plot data:\n";
+	logfile << "x from: " << xfrom << " to " << xto << std::endl;
+	logfile << "y from: " << yfrom << " to " << yto << std::endl;
+	logfile << "x resolution: " << Nx << " and y resolution: " << Ny;
+	logfile << std::endl << std::endl;
+	logfile << "The data has been saved scussefully to:\n";
+	logfile << "'data.bin'     [x_vec, y_vec, grid_11, grid_22, grid_12, grid_1, grid_2, theta_p]\n";
+	logfile << "'dim_data.bin' [Nx, Ny]\n";
+	logfile.close();
 
 	return 0;
 }

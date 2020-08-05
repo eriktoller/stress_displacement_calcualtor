@@ -302,24 +302,6 @@ int main()
 	ddcvec traj_1, traj_2;
 	dvec x_vec, y_vec;
 
-	/*
-	// Assigning varibales
-	H = dcomp(0,0);
-	rho = 2750.0;
-	g = 9.816;
-	nu = 0.3;
-	kappa = 3 - 4 * nu;
-	
-
-	// Plot dim and resolutioin
-	xfrom = -1;
-	xto = 1;
-	yfrom = -1;
-	yto = 1;
-	Nx = 201;
-	Ny = 201;
-	*/
-
 	// Read the input data from binary file
 	double fin[6];
 	std::ifstream input_file("input_data.bin", std::ios::in | std::ios::binary);
@@ -352,8 +334,8 @@ int main()
 	std::cout << "y resolution: " << Ny << std::endl;
 	std::cout << "Total number of points: " << Nx * Ny << std::endl;
 	std::cout << "Number of trajectory levels: " << lvs_traj << std::endl;
-	std::cout << "Number of steps in trajectories: " << Ntraj;
-	std::cout <<std::endl << std::endl;
+	std::cout << "Number of steps in trajectories: " << Ntraj << std::endl;
+	std::cout << std::endl;
 
 	/* --------------------------------------------------------------------
 			Calcuating the stress field
@@ -476,15 +458,14 @@ int main()
 
 	std::cout << "Saving completed" << std::endl << std::endl;
 
-	// Create the log file
-	auto end = std::chrono::system_clock::now(); // Get the stop time
+	// Get the date and execution time
+	auto end = std::chrono::system_clock::now();
 	std::chrono::duration<double> elapsed_seconds = end - start;
 	std::time_t end_time = std::chrono::system_clock::to_time_t(end);
-	//const char * dt = std::ctime(&end_time);
 	char str_time[26];
 	ctime_s(str_time, sizeof str_time, &end_time);
 	
-
+	// Create the log file
 	std::ofstream logfile;
 	logfile.open("log.txt");
 	logfile << "This is the log file for computation completed on: " << str_time << std::endl;

@@ -17,6 +17,13 @@ To generate plot for stresses filed (here only for gravity at the moment) follow
    - Calculates the stress fields and provide them in `data.bin` and the dimensions in `dim_data.bin`.
 3. Run `bin_read.m`
    - Reads the data and plots the stress fields.
+   
+## Included
+The program inludes several analytic element for linear elasticity. Currently the following anlaytic elements are included:
+- gravity and
+- cracks (not yet released).
+
+The elements are coded into the program and to ad new it code needs to be altered.
 
 Created by,
 Erik Toller

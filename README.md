@@ -46,7 +46,7 @@ These are the plotting properties:
 - `Ntraj` the number of steps for the stress trajectories
 - `lvs_traj` the number of stress trajectories
 
-The elements are coded into the program and to ad new it code needs to be altered.
-
+__________________________________________________________________________________________
 Created by,
+
 Erik Toller

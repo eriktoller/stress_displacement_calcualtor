@@ -21,6 +21,31 @@ The program inludes several analytic element for linear elasticity. Currently th
 - gravity and
 - cracks (not yet released).
 
+## Input data
+This list contains all the definitions of the user input data defined in `bin_wirte.m`. These are the model properties:
+- `H` the elevation for where the gravity is set to zero
+- `rho` the density of the elastic medium
+- `g` the Newtonian constant of gravitation
+- `nu` the Poisson's ratio
+- `kappa` the bulk modulus
+- `nc` *inclued with cracks*
+- `m` *inclued with cracks*
+- `z1` *inclued with cracks*
+- `z2` *inclued with cracks*
+- `L` *inclued with cracks*
+- `mu` *inclued with cracks*
+- `beta` *inclued with cracks*
+
+These are the plotting properties:
+- `xfrom` the starting value for x-axis
+- `xto` the end value for the x-axis
+- `yfrom` the starting value for the y-axis
+- `yto` the end value for the y-axis
+- `Nx` the number of grid points in the x-diraction
+- `Ny` the numbe rof grid points in the y-direction
+- `Ntraj` the number of steps for the stress trajectories
+- `lvs_traj` the number of stress trajectories
+
 The elements are coded into the program and to ad new it code needs to be altered.
 
 Created by,

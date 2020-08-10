@@ -27,7 +27,7 @@ This list contains all the definitions of the user input data defined in `bin_wi
 - `rho` the density of the elastic medium
 - `g` the Newtonian constant of gravitation
 - `nu` the Poisson's ratio
-- `kappa` the bulk modulus
+- `kappa` the bulk modulus (is calculated by default with `3-4*nu`)
 - `nc` *inclued with cracks*
 - `m` *inclued with cracks*
 - `z1` *inclued with cracks*

@@ -18,8 +18,9 @@ To generate plot for stresses filed (here only for gravity at the moment) follow
    
 ## Included
 The program inludes several analytic element for linear elasticity. Currently the following anlaytic elements are included:
-- gravity and
-- cracks (not yet released).
+- gravity,
+- cracks (not yet released) and
+- circular tunnel (not yet released).
 
 ## Input data
 This list contains all the definitions of the user input data defined in `bin_wirte.m`. These are the model properties:
@@ -35,6 +36,12 @@ This list contains all the definitions of the user input data defined in `bin_wi
 - `L` *inclued with cracks*
 - `mu` *inclued with cracks*
 - `beta` *inclued with cracks*
+- `nt` *inclued with circular tunnel*
+- `mt` *inclued with circular tunnel*
+- `z0` *inclued with circular tunnel*
+- `R` *inclued with circular tunnel*
+- `a` *inclued with circular tunnel*
+- `b` *inclued with circular tunnel*
 
 These are the plotting properties:
 - `xfrom` the starting value for x-axis

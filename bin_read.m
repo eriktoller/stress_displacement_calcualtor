@@ -3,10 +3,6 @@ function [Nx, Ny, Ntraj, lvs_traj, x_vec, y_vec, grid_11, grid_22, grid_12, grid
 %   This program read the output data from the program
 %   stress_field_calculator.cpp. It then prodcues the plots for the 
 %   different stress fields.
-close all
-clearvars
-clc
-
 if_plot = 1; % set to 1 for plots to run
 
 disp('Load the data from the bin-file')
@@ -21,9 +17,31 @@ Nx = B(1);
 Ny = B(2);
 Ntraj = B(3);
 lvs_traj = B(4);
+nc = B(5);
+nt = B(6);
+z1 = zeros(1,nc);
+z2 = zeros(1,nc);
+for ii = 1:nc
+    re = 6 + ii;
+    im = 6 + nc + ii;
+    z1(ii) = complex(B(re),B(im));
+    re = 6 + nc*2 + ii;
+    im = 6 + nc*3 + ii;
+    z2(ii) = complex(B(re),B(im));
+end
+z0 = zeros(1,nt);
+R = [];
+for ii = 1:nt
+    re = 6 + nc*4 + ii;
+    im = 6 + nc*4 + nt + ii;
+    z0(ii) = complex(B(re),B(im));
+    pos = 6 + nc*4 + nt*2 + ii;
+    R = [R,B(pos)];
+end
+
+
 x_vec = A(1:Nx);
 y_vec = A((Nx+1):(Nx+Ny));
-
 grid_11 = zeros(Nx,Ny);
 grid_22 = zeros(Nx,Ny);
 grid_12 = zeros(Nx,Ny);
@@ -64,7 +82,7 @@ for ii = 1:Nx
     start = stop + 1;
 end
 for ii = 1:lvs_traj
-    stop = start + lvs_traj*2 -1;
+    stop = start + Ntraj*2 -1;
     for jj = 1:Ntraj
         re = start + jj - 1;
         im = start + Ntraj + jj - 1;
@@ -73,7 +91,7 @@ for ii = 1:lvs_traj
     start = stop + 1;
 end
 for ii = 1:lvs_traj
-    stop = start + lvs_traj*2 -1;
+    stop = start + Ntraj*2 -1;
     for jj = 1:Ntraj
         re = start + jj - 1;
         im = start + Ntraj + jj - 1;
@@ -83,70 +101,121 @@ for ii = 1:lvs_traj
 end
 disp('Completed')
 
+lvs = 30;
 if if_plot == 1
     % Ploting
     disp(' ')
     disp('Plotting:')
-    lvs = 30;
+    disp('Contour levels set to:')
+    disp(lvs)
 
     disp('figure (1/7)')
     figure
     hold on
     contour(x_vec, y_vec, grid_1,lvs,'blue');
+    for ii = 1:nc
+        Plot_line(z1(ii),z2(ii),'black')
+    end
+    for ii = 1:nt
+        plot_circle(z0(ii),R(ii),'black')
+    end
     legend('\sigma_{1}')
     xlabel('x-direction')
     ylabel('y-direction')
+    axis([x_vec(1) x_vec(end) y_vec(1) y_vec(end)])
 
     disp('figure (2/7)')
     figure
     hold on
     contour(x_vec, y_vec, grid_2,lvs,'red');
+    for ii = 1:nc
+        Plot_line(z1(ii),z2(ii),'black')
+    end
+    for ii = 1:nt
+        plot_circle(z0(ii),R(ii),'black')
+    end
     legend('\sigma_{2}')
     xlabel('x-direction')
     ylabel('y-direction')
+    axis([x_vec(1) x_vec(end) y_vec(1) y_vec(end)])
 
     disp('figure (3/7)')
     figure
     hold on
     contour(x_vec, y_vec, grid_11,lvs,'blue');
+    for ii = 1:nc
+        Plot_line(z1(ii),z2(ii),'black')
+    end
+    for ii = 1:nt
+        plot_circle(z0(ii),R(ii),'black')
+    end
     legend('\sigma_{11}')
     xlabel('x-direction')
     ylabel('y-direction')
+    axis([x_vec(1) x_vec(end) y_vec(1) y_vec(end)])
 
     disp('figure (4/7)')
     figure
     hold on
     contour(x_vec, y_vec, grid_22,lvs,'red');
+    for ii = 1:nc
+        Plot_line(z1(ii),z2(ii),'black')
+    end
+    for ii = 1:nt
+        plot_circle(z0(ii),R(ii),'black')
+    end
     legend('\sigma_{22}')
     xlabel('x-direction')
     ylabel('y-direction')
+    axis([x_vec(1) x_vec(end) y_vec(1) y_vec(end)])
 
     disp('figure (5/7)')
     figure
     hold on
-    contour(x_vec, y_vec, grid_12,lvs,'blue');
+    contour(x_vec, y_vec, grid_12,lvs,'green');
+    for ii = 1:nc
+        Plot_line(z1(ii),z2(ii),'black')
+    end
+    for ii = 1:nt
+        plot_circle(z0(ii),R(ii),'black')
+    end
     legend('\sigma_{12}')
     xlabel('x-direction')
     ylabel('y-direction')
+    axis([x_vec(1) x_vec(end) y_vec(1) y_vec(end)])
 
     disp('figure (6/7)')
     figure
     hold on
     contour(x_vec, y_vec, theta_p,lvs,'red');
+    for ii = 1:nc
+        Plot_line(z1(ii),z2(ii),'black')
+    end
+    for ii = 1:nt
+        plot_circle(z0(ii),R(ii),'black')
+    end
     legend('\theta_{p}')
     xlabel('x-direction')
     ylabel('y-direction')
+    axis([x_vec(1) x_vec(end) y_vec(1) y_vec(end)])
     
     disp('figure (7/7)')
     figure
     hold on
     for ii = 1:lvs_traj
-        p1 = plot(traj_1(ii,:),'blue');
-        p2 = plot(traj_2(ii,:),'red');
+        p1 = plot(real(traj_1(ii,:)),imag(traj_1(ii,:)),'blue');
+        p2 = plot(real(traj_2(ii,:)),imag(traj_2(ii,:)),'red');
+    end
+    for ii = 1:nc
+        Plot_line(z1(ii),z2(ii),'black')
+    end
+    for ii = 1:nt
+        plot_circle(z0(ii),R(ii),'black')
     end
     legend([p1 p2], '\sigma_{1}','\sigma_{2}')
     xlabel('x-direction')
     ylabel('y-direction')
+    axis([x_vec(1) x_vec(end) y_vec(1) y_vec(end)])
 
     disp('Completed')
 else

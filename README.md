@@ -7,7 +7,7 @@ The program now includes the analytic element for gravity, and it produces the C
 
 A log file, `log.txt`, is created with all the variable data and time stamp.
 
-This program has been developed using *Microsoft Visual Stuido* and some only the `.cpp` file is included in the repository. 
+This program has been developed using *Microsoft Visual Stuido* and only the `.cpp` file is included in the repository. 
 
 ## Instructions
 To generate plot for stresses filed (here only for gravity at the moment) follow the following procedure:

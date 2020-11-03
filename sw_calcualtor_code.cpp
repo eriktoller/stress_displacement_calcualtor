@@ -189,33 +189,8 @@ inline dcomp w_crack(dcomp z, double kappa, double G, dcomp z1, dcomp z2, double
 	dcomp w, L_frac;
 	double n;
 
-	// Getting the chi - and Z - coordinates
-	chi = chi_from_z(z, z1, z2, L, mu);
-	chi_bar = conj(chi);
-	Z = exp(dcomp(0, -1)*mu) * 2.0 * (z - 0.5*(z1 + z2)) / L;
-
-	// Calculating the series
-	phi_bar = 0;
-	dphi = 0;
-	psi = 0;
-	n = 0;
-	chi_pow = chi * chi - 1.0;
-	for (int ii = 0; ii < m; ii++)
-	{
-		dcomp beta_n;
-		n += 1;
-		beta_n = beta[ii] * n;
-		dphi += conj(beta_n) * pow(chi, (1.0 - n)) / chi_pow;
-		phi_bar -= beta[ii] * pow(chi_bar, -n);
-		psi += beta[ii] * pow(chi, -n);
-	}
-
-	// Multiplying the constants
-	L_frac = (4.0 / L) * exp(dcomp(0, -1)*mu);
-	dphi *= L_frac;
-
 	// Calcualting w
-	w = 1 / (4 * G)*(0.5*L*(Z - conj(Z))*dphi + exp(dcomp(0, -1)*mu)*kappa*phi_bar + exp(dcomp(0, -1)*mu)*psi );
+	w = 0;
 
 	return { w };
 }
@@ -231,55 +206,7 @@ inline dcomp w_circ_tunnel(dcomp z, double kappa, double G, dcomp z0, double R, 
 	dcomp w;
 	double n;
 
-	Z = (z - z0) / R;
-	Z_bar = conj(Z);
-	ZZ = Z * Z_bar;
-
-	if (ZZ.real() < 0.999999)
-	{
-		w = dcomp(NAN, NAN);
-	}
-	else
-	{
-		psi = 0;
-		dPhi = 0;
-		Phi_bar = 0;
-		xi = 0;
-
-		for (int ii = 0; ii < mt; ii++)
-		{
-			n = ii;
-			dcomp c = b[ii] + a[ii];
-			dPhi = dPhi + c*pow(Z, -n);
-			xi = xi + (n) / (n + 1)*c*pow(Z,(-n - 1));
-			psi = psi + a[ii] / (n + 1)*pow(Z, (-n - 1));
-			if (n > 1) 
-			{
-				Phi_bar = Phi_bar + conj(c) / (1 - n)*pow(Z_bar, (1 - n));
-			}
-		}
-
-		psi = psi * 2.0 * R;
-		Phi_bar = Phi_bar * R;
-
-		// Getting the constant from integration
-		dcomp w0;
-		dcomp c = b[1] + a[1];
-		if (arg(Z) >= 0)
-		{
-			w0 = dcomp(0,1)*R*(1.0 / (4.0 * G))* kappa*conj(c) * pi() / 2.0;
-		}
-		else
-		{
-			w0 = dcomp(0, -1)*R*(1.0 / (4.0 * G))* kappa*conj(c) * pi() / 2.0;
-		}
-
-		// Calculating the w
-		double alpha = arg(Z) + .5*pi();
-		w = 1.0 / (4.0 * G)*(-(R*Z_bar)*dPhi + kappa * Phi_bar + R * xi + psi) + w0;
-		w = w * exp(dcomp(0,1)*alpha);
-	}
-
+	w = 0;
 
 	return { w };
 }
@@ -343,39 +270,9 @@ inline std::tuple<dcomp, dcomp> tau_crack(dcomp z, dcomp z1, dcomp z2, double L,
 	dcomp tau_11, tau_12, S1, L_frac;
 	double n;
 
-	// Getting the chi - and Z - coordinates
-	chi = chi_from_z(z, z1, z2, L, mu);
-	chi_bar = conj(chi);
-	Z = exp(dcomp(0, -1)*mu) * 2.0 * (z - 0.5*(z1 + z2)) / L;
-
-	// Calculating the series
-	dphi = 0;
-	dphi_bar = 0;
-	ddphi = 0;
-	dpsi = 0;
-	n = 0;
-	chi_pow = chi * chi - 1.0;
-	for (int ii = 0; ii < m; ii++)
-	{
-		dcomp beta_n;
-		n += 1;
-		beta_n = beta[ii] * n;
-		dphi += conj(beta_n) * pow(chi, (1.0 - n)) / chi_pow;
-		dphi_bar += beta_n * pow(chi_bar, (1.0 - n)) / (chi_bar * chi_bar - 1.0);
-		ddphi -= conj(beta_n) * pow(chi, (2.0 - n)) / (chi_pow*chi_pow*chi_pow)*((n + 1.0)*chi*chi - n + 1.0);
-		dpsi -= beta_n * (pow(chi, (1.0 - n))) / chi_pow;
-	}
-
-	// Multiplying the constants
-	L_frac = (4.0 / L) * exp(dcomp(0, -1)*mu);
-	dphi *= L_frac;
-	dphi_bar *= conj(L_frac);
-	ddphi *= (16.0 / (L*L))*exp(dcomp(0, -2)*mu);
-	dpsi *= L_frac;
-
-	// Calcualting tau
-	tau_11 = -0.5*L*(Z - conj(Z))*ddphi - exp(dcomp(0, -1)*mu)*(dphi + dpsi);
-	tau_12 = -exp(dcomp(0, 1)*mu)*dphi - exp(dcomp(0, -1)*mu)*dphi_bar;
+	
+	tau_11 = 0
+	tau_12 = 0;
 
 	return { tau_11, tau_12 };
 }
@@ -416,37 +313,8 @@ inline std::tuple<dcomp, dcomp> tau_circ_tunnel(dcomp z, dcomp z0, double R, int
 	dcomp tau_11, tau_12;
 	double n;
 
-	Z = (z - z0) / R;
-	Z_bar = conj(Z);
-	ZZ = Z * Z_bar;
-
-	if (ZZ.real() < 0.999999)
-	{
-		tau_11 = dcomp(NAN, NAN);
-		tau_12 = dcomp(NAN, NAN);
-	}
-	else
-	{
-		dPsi = 0;
-		dPhi = 0;
-		dPhi_bar = 0;
-		ddPhi = 0;
-
-
-		for (int ii = 0; ii < mt; ii++)
-		{
-			n = ii;
-			dcomp c = b[ii] + a[ii];
-			dPsi += a[ii] * pow(Z, (-n - 2));
-			dPhi += c * pow(Z, -n);
-			dPhi_bar += conj(c)*pow(Z_bar, -n);
-			ddPhi += n * c*pow(Z, (-n - 1));
-		}
-
-		dPsi = -dPsi * 2.0;
-		ddPhi = -ddPhi / R;
-		tau_11 = (R*Z_bar - R / Z)*ddPhi - dPsi;
-		tau_12 = -dPhi - dPhi_bar;
+		tau_11 = 0;
+		tau_12 = 0;
 	}
 
 	return { tau_11, tau_12 };

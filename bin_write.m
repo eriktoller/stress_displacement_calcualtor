@@ -26,7 +26,9 @@ switch nargin
         H = complex(0,0);
         rho = 2750;
         g = 9.816*0;
+        sigma_11inf = 20;
         nu = 0.3;
+        G = 20e3;
         kappa = 3 - 4 * nu;
         
         nc = 1;
@@ -60,10 +62,18 @@ switch nargin
         xto = 1;
         yfrom = -1;
         yto = 1;
-        Nx = 400;
-        Ny = 400;
+        Nx = 800;
+        Ny = 800;
+        Nw = 10;
         Ntraj = 800;
-        lvs_traj = 60;
+        lvs_traj = 40;
+        xtraj = [-1 + 1i/Ntraj, 1 + 1i/Ntraj];
+        ytraj = [1/Ntraj + -1i, 1/Ntraj + 1i];
+        xtraj_vec = []; ytraj_vec = [];
+        for ii = 1:2
+           xtraj_vec = [xtraj_vec, real(xtraj(ii)), imag(xtraj(ii))];
+           ytraj_vec = [ytraj_vec, real(ytraj(ii)), imag(ytraj(ii))];
+        end
         
         % Check if the data is correct
         disp('Checking the data dimensions')
@@ -108,12 +118,12 @@ switch nargin
             disp('Data check OK')
             
             % Write the bin-files for C++ program
-            A = [real(H),imag(H),rho,g,nu,kappa,nc,m,nt,mt,real(z1),imag(z1),real(z2),imag(z2),L,mu,beta_vec,real(z0),imag(z0),R,a_vec,b_vec]; % Vector to write
+            A = [real(H),imag(H),rho,g,sigma_11inf,nu,kappa,G,nc,m,nt,mt,real(z1),imag(z1),real(z2),imag(z2),L,mu,beta_vec,real(z0),imag(z0),R,a_vec,b_vec]; % Vector to write
             input_file = fopen('input_data.bin','w');
             fwrite(input_file, A, 'double');
             fclose(input_file);
 
-            B = [xfrom,xto,yfrom,yto,Nx,Ny,Ntraj,lvs_traj]; % Vector to write
+            B = [xfrom,xto,yfrom,yto,Nx,Ny,Nw,Ntraj,lvs_traj,xtraj_vec,ytraj_vec]; % Vector to write
             plot_file = fopen('plot_data.bin','w');
             fwrite(plot_file, B, 'double');
             fclose(plot_file);

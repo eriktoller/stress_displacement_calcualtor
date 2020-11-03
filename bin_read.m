@@ -4,6 +4,7 @@ function [Nx, Ny, Ntraj, lvs_traj, x_vec, y_vec, grid_11, grid_22, grid_12, grid
 %   stress_field_calculator.cpp. It then prodcues the plots for the 
 %   different stress fields.
 if_plot = 1; % set to 1 for plots to run
+close all
 
 disp('Load the data from the bin-file')
 data_file = fopen('data.bin', 'r');
@@ -15,42 +16,47 @@ disp(' ')
 disp('Getting the vecotrs and grids')
 Nx = B(1);
 Ny = B(2);
-Ntraj = B(3);
-lvs_traj = B(4);
-nc = B(5);
-nt = B(6);
+Nw = B(3);
+Ntraj = B(4);
+lvs_traj = B(5);
+nc = B(6);
+nt = B(7);
 z1 = zeros(1,nc);
 z2 = zeros(1,nc);
 for ii = 1:nc
-    re = 6 + ii;
-    im = 6 + nc + ii;
+    re = 7 + ii;
+    im = 7 + nc + ii;
     z1(ii) = complex(B(re),B(im));
-    re = 6 + nc*2 + ii;
-    im = 6 + nc*3 + ii;
+    re = 7 + nc*2 + ii;
+    im = 7 + nc*3 + ii;
     z2(ii) = complex(B(re),B(im));
 end
 z0 = zeros(1,nt);
 R = [];
 for ii = 1:nt
-    re = 6 + nc*4 + ii;
-    im = 6 + nc*4 + nt + ii;
+    re = 7 + nc*4 + ii;
+    im = 7 + nc*4 + nt + ii;
     z0(ii) = complex(B(re),B(im));
-    pos = 6 + nc*4 + nt*2 + ii;
+    pos = 7 + nc*4 + nt*2 + ii;
     R = [R,B(pos)];
 end
 
 
 x_vec = A(1:Nx);
 y_vec = A((Nx+1):(Nx+Ny));
+x_vecw = A((Nx+Ny+1):(Nx+Ny+Nw));
+y_vecw = A((Nx+Ny+Nw+1):(Nx+Ny+Nw+Nw));
 grid_11 = zeros(Nx,Ny);
 grid_22 = zeros(Nx,Ny);
 grid_12 = zeros(Nx,Ny);
 grid_1 = zeros(Nx,Ny);
 grid_2 = zeros(Nx,Ny);
 theta_p = zeros(Nx,Ny);
-traj_1 = zeros(lvs_traj,Ntraj);
-traj_2 = zeros(lvs_traj,Ntraj);
-start = Nx+Ny+1;
+traj_1 = zeros(lvs_traj*2,Ntraj);
+traj_2 = zeros(lvs_traj*2,Ntraj);
+grid_w = zeros(Nw,Nw);
+traj_w = zeros(Nw,Ntraj);
+start = Nx+Ny+Nw+Nw+1;
 for ii = 1:Nx
     stop = start + Nx -1;
     grid_11(:,ii) = A(start:stop);
@@ -81,7 +87,7 @@ for ii = 1:Nx
     theta_p(:,ii) = A(start:stop);
     start = stop + 1;
 end
-for ii = 1:lvs_traj
+for ii = 1:lvs_traj*2
     stop = start + Ntraj*2 -1;
     for jj = 1:Ntraj
         re = start + jj - 1;
@@ -90,12 +96,30 @@ for ii = 1:lvs_traj
     end
     start = stop + 1;
 end
-for ii = 1:lvs_traj
+for ii = 1:lvs_traj*2
     stop = start + Ntraj*2 -1;
     for jj = 1:Ntraj
         re = start + jj - 1;
         im = start + Ntraj + jj - 1;
         traj_2(ii,jj) = complex(A(re),A(im));
+    end
+    start = stop + 1;
+end
+for ii = 1:Nw
+    stop = start + Nw*2 -1;
+    for jj = 1:Nw
+        re = start + jj - 1;
+        im = start + Nw + jj - 1;
+        grid_w(jj,ii) = complex(A(re),A(im));
+    end
+    start = stop + 1;
+end
+for ii = 1:Nw*2
+    stop = start + Ntraj*2 -1;
+    for jj = 1:Ntraj
+        re = start + jj - 1;
+        im = start + Ntraj + jj - 1;
+        traj_w(ii,jj) = complex(A(re),A(im));
     end
     start = stop + 1;
 end
@@ -202,7 +226,7 @@ if if_plot == 1
     disp('figure (7/7)')
     figure
     hold on
-    for ii = 1:lvs_traj
+    for ii = 1:lvs_traj*2
         p1 = plot(real(traj_1(ii,:)),imag(traj_1(ii,:)),'blue');
         p2 = plot(real(traj_2(ii,:)),imag(traj_2(ii,:)),'red');
     end
@@ -216,6 +240,24 @@ if if_plot == 1
     xlabel('x-direction')
     ylabel('y-direction')
     axis([x_vec(1) x_vec(end) y_vec(1) y_vec(end)])
+    
+    disp('figure (8/7)')
+    figure
+    hold on
+    quiver(x_vecw, y_vecw, real(grid_w), -imag(grid_w),'blue');
+    for ii = 1:Nw*2
+        p1 = plot(real(traj_w(ii,:)),imag(traj_w(ii,:)),'blue');
+    end
+    for ii = 1:nc
+        Plot_line(z1(ii),z2(ii),'black')
+    end
+    for ii = 1:nt
+        plot_circle(z0(ii),R(ii),'black')
+    end
+    legend('w')
+    xlabel('x-direction')
+    ylabel('y-direction')
+    axis([x_vecw(1) x_vecw(end) y_vecw(1) y_vecw(end)])
 
     disp('Completed')
 else

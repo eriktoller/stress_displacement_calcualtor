@@ -1,4 +1,4 @@
-# Stress adn Displacement Calculator
+# Stress and Displacement Calculator
 A program which calculated the stress field for given functions and grid. The input files for the plot properties and the physical constants are provided through the MATLAB program `bin_write.m` and the program `bin_read.m` can be sued to plot the results calculated by `stress_field_calculator.cpp`.
 
 At the moment the programs does not sync automatically and must be manually run in both MATLAB and the preferred C++ editor. Also, the function for the stresses are coded in the C++ file and changing these, or appending new functions, requires changes in the main code. 
@@ -31,6 +31,7 @@ This list contains all the definitions of the user input data defined in `bin_wi
 - `g` the Newtonian constant of gravitation
 - `nu` the Poisson's ratio
 - `kappa` the bulk modulus (is calculated by default with `kappa = 3-4*nu`)
+- `sigma_11inf` the uniform stress state
 - `nc` *inclued with cracks*
 - `m` *inclued with cracks*
 - `z1` *inclued with cracks*
@@ -51,9 +52,12 @@ These are the plotting properties:
 - `yfrom` the starting value for the y-axis
 - `yto` the end value for the y-axis
 - `Nx` the number of grid points in the x-diraction
-- `Ny` the numbe rof grid points in the y-direction
+- `Ny` the number of grid points in the y-direction
 - `Ntraj` the number of steps for the stress trajectories
 - `lvs_traj` the number of stress trajectories
+- `xtraj` the vector containing the start and end point for the line hwere the trajectores are evenly spaced, for <img src="https://latex.codecogs.com/gif.latex?\sigma_{1}"/>
+- `ytraj` the vector containing the start and end point for the line hwere the trajectores are evenly spaced, for <img src="https://latex.codecogs.com/gif.latex?\sigma_{2}"/>
+- `Nw` the number of grid points in the x- and y-direction for the displacements
 
 __________________________________________________________________________________________
 Created by,
